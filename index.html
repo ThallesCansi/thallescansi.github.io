@@ -1,40 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Thalles Cansi - Portfolio</title>
-        <link rel="stylesheet" href="styles.css" />
-    </head>
-    <body>
-        <header>
-            <span class="thalles">Thalles</span><span class="cansi">Cansi</span>
-            <nav>
-                <button class="theme-toggle" id="themeToggle">
-                    <img id="themeIcon" src="images/light_mode.svg" alt="Alterar tema" />
-                </button>
-            </nav>
-        </header>
-
-        <h1>Hi, I'm Thalles. I'm a fullstack developer.</h1>
-
-        <div class="social-icons">
-            <a href="https://github.com" target="_blank"><img src="images/Github.svg" alt="GitHub" /></a>
-            <a href="https://linkedin.com" target="_blank"><img src="images/Linkedin.svg" alt="LinkedIn" /></a>
-        </div>
+        <meta
+            name="description"
+            content="Thalles Cansi — full-stack developer building simple, useful software for the web."
+        />
+        <meta name="color-scheme" content="light dark" />
+        <title>Thalles Cansi — Full-stack Developer</title>
 
         <script>
+            (() => {
+                try {
+                    const savedTheme = localStorage.getItem("theme");
+                    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+                        ? "dark"
+                        : "light";
+
+                    document.documentElement.dataset.theme = savedTheme || systemTheme;
+                } catch {
+                    document.documentElement.dataset.theme = "light";
+                }
+            })();
+        </script>
+
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+
+    <body>
+        <header class="site-header">
+            <a class="brand" href="/" aria-label="Thalles Cansi — home">TC<span>.</span></a>
+
+            <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false">
+                <span class="theme-dot" aria-hidden="true"></span>
+                <span id="themeLabel">Dark</span>
+            </button>
+        </header>
+
+        <main class="hero">
+            <p class="eyebrow">Full-stack developer</p>
+
+            <h1>
+                Hi, I'm
+                <span>Thalles Cansi.</span>
+            </h1>
+
+            <p class="intro">I build simple, useful software for the web.</p>
+
+            <nav class="links" aria-label="External links">
+                <a href="https://github.com/ThallesCansi" target="_blank" rel="noreferrer">
+                    GitHub <span aria-hidden="true">↗</span>
+                </a>
+            </nav>
+        </main>
+
+        <footer class="site-footer">
+            <span>Thalles Cansi</span>
+            <span>HTML · CSS · JavaScript</span>
+        </footer>
+
+        <script>
+            const root = document.documentElement;
             const themeToggle = document.getElementById("themeToggle");
-            const themeIcon = document.getElementById("themeIcon");
-            const body = document.body;
+            const themeLabel = document.getElementById("themeLabel");
+            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+            function renderTheme(theme) {
+                const isDark = theme === "dark";
+                root.dataset.theme = theme;
+                themeToggle.setAttribute("aria-pressed", String(isDark));
+                themeToggle.setAttribute(
+                    "aria-label",
+                    isDark ? "Switch to light mode" : "Switch to dark mode",
+                );
+                themeLabel.textContent = isDark ? "Light" : "Dark";
+            }
+
+            renderTheme(root.dataset.theme || "light");
 
             themeToggle.addEventListener("click", () => {
-                body.classList.toggle("dark-mode");
-                if (body.classList.contains("dark-mode")) {
-                    themeIcon.src = "images/dark_mode.svg";
-                } else {
-                    themeIcon.src = "images/light_mode.svg";
+                const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+                renderTheme(nextTheme);
+
+                try {
+                    localStorage.setItem("theme", nextTheme);
+                } catch {
+                    // The theme still works when storage is unavailable.
                 }
+            });
+
+            systemTheme.addEventListener("change", (event) => {
+                try {
+                    if (localStorage.getItem("theme")) return;
+                } catch {
+                    // Fall back to following the system preference.
+                }
+
+                renderTheme(event.matches ? "dark" : "light");
             });
         </script>
     </body>
